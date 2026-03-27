@@ -2,6 +2,7 @@ import {Box, Container, Grid, GridCol, Group} from "@mantine/core";
 import classes from "@/app/global.module.css";
 import {ReactNode} from "react";
 import {articlesFromHelps, getHelp} from "@/serverRpcs";
+import type {Article} from "@/serverRpcs";
 import {DocNav} from "@/parts/docNav";
 import {DocSearch} from "@/parts/docSearch";
 
@@ -10,8 +11,13 @@ export default async function DocsLayout({
                                          }: Readonly<{
   children: ReactNode;
 }>) {
-  const helps = await getHelp();
-  const articles = articlesFromHelps(helps);
+  let articles: Article[] = [];
+  try {
+    const helps = await getHelp();
+    articles = articlesFromHelps(helps);
+  } catch (error) {
+    console.error("Failed to fetch help feed for docs layout", error);
+  }
   return (
     <Container className={classes.container}>
       <Grid>

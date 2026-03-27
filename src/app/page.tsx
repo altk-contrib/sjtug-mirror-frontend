@@ -4,12 +4,19 @@ import {Banner} from "@/parts/banner";
 import {News} from "@/parts/news";
 import {Repos} from "@/parts/repos";
 import {articleMapFromArticles, articlesFromHelps, getHelp} from "@/serverRpcs";
+import type {ArticleMap} from "@/serverRpcs";
 import {RelLinks} from "@/parts/relLinks";
 
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const helps = await getHelp();
-  const articleMap = articleMapFromArticles(articlesFromHelps(helps));
+  let articleMap: ArticleMap = {};
+  try {
+    const helps = await getHelp();
+    articleMap = articleMapFromArticles(articlesFromHelps(helps));
+  } catch (error) {
+    console.error("Failed to fetch help feed for home page", error);
+  }
   return (
     <>
       <Banner/>
